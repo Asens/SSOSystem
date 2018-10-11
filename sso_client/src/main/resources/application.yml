@@ -3,8 +3,19 @@ server:
 
 spring:
   application:
-    name: sso_client
+    name: SSOClient
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sso_system?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: root
+
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8089/eureka/
+
+sso:
+  serverUrl: http://localhost:8086/sso
+
+

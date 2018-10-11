@@ -1,48 +1,45 @@
 package cn.asens.config;
 
-import cn.asens.interceptor.SSOInterceptor;
-import cn.asens.service.RemoteService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
 
 /**
- * @author Asens
+ * web配置
+ *
+ * @author fengshuonan
+ * @Date 2018/8/29 下午3:32
  */
+@ControllerAdvice
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
     @Resource
-    private RestTemplate restTemplate;
+    private RestTemplateBuilder builder;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(SSOInterceptor())
-                .addPathPatterns("/test");
-    }
-
-    /**
-     * 配置sso
-     */
     @Bean
     @ConfigurationProperties(prefix = "sso")
     public SSOProperties SSOProperties() {
         return new SSOProperties();
     }
 
-    @Bean
-    public RemoteService remoteService() {
-        return new RemoteService(restTemplate, SSOProperties());
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(new SsoServerInterceptor(SSOProperties())).addPathPatterns("/**").excludePathPatterns("/login", "/ssoApi/authToken", "/logout", "/static/**");
+//    }
 
 
     @Bean
-    public SSOInterceptor SSOInterceptor() {
-        return new SSOInterceptor();
+    public RestTemplate restTemplate() {
+        return builder.build();
     }
 }

@@ -13,4 +13,9 @@ public class TestAct {
     public Object main() {
         return "index";
     }
+
+    @RequestMapping("/test")
+    public Object test() {
+        return "sso server test";
+    }
 }

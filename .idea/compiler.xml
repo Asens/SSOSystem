@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="register_center" />
         <module name="sso_client" />
+        <module name="sso_core" />
         <module name="sso_server" />
       </profile>
     </annotationProcessing>

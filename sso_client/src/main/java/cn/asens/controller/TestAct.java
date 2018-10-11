@@ -1,5 +1,8 @@
 package cn.asens.controller;
 
+import cn.asens.entity.User;
+import cn.asens.service.UserService;
+import cn.asens.service.api.TokenApiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,13 +16,13 @@ import javax.annotation.Resource;
 @RestController
 public class TestAct {
     @Resource
-    private RestTemplate restTemplate;
+    private TokenApiService tokenApiService;
+    @Resource
+    private UserService userService;
 
     @RequestMapping("/")
     public Object main() {
-        ResponseEntity<String> result=
-                restTemplate.getForEntity("http://sso_server/",String.class);
-        return "index";
+        return tokenApiService.test();
     }
 
     @RequestMapping("/test")
