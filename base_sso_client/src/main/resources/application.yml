@@ -1,0 +1,16 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: SSOBaseClient
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8089/eureka/
+
+sso:
+  serverUrl: http://localhost:8086
+
+

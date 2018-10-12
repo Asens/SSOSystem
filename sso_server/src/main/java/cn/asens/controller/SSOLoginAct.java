@@ -8,12 +8,17 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import static cn.asens.constants.SsoConstants.LOGOUT_URL;
 
 /**
  * @author Asens
@@ -25,14 +30,12 @@ public class SSOLoginAct {
     @Resource
     private AuthService authService;
 
-    @RequestMapping("/sso")
-    public String sso(ModelMap model, HttpServletRequest request) {
-        model.put(SsoConstants.REDIRECT_PARAM_NAME,
-                request.getParameter(SsoConstants.REDIRECT_PARAM_NAME));
+    @GetMapping("/login")
+    public String sso() {
         return "index";
     }
 
-    @RequestMapping("/doLogin")
+    @PostMapping("/login")
     @ResponseBody
     @SneakyThrows
     public Object doLogin(String username, String password, HttpServletRequest request) {
@@ -41,6 +44,7 @@ public class SSOLoginAct {
         Integer userId=authService.checkUserLogin(username,password);
         if(userId!=null){
             String token=authService.createToken(userId);
+            request.getSession().setAttribute(SsoConstants.SESSION_LOGIN_FLAG, token);
             JSONObject r=new JSONObject();
             r.put("status","success");
             r.put("returnUrl",redirectUrl + "?" +
@@ -54,9 +58,22 @@ public class SSOLoginAct {
     }
 
 
-    @RequestMapping("/login/success")
-    @ResponseBody
-    public String success() {
-        return "login success";
+    @RequestMapping(LOGOUT_URL)
+    public String logout(HttpServletRequest request, ModelMap model) {
+
+        //销毁自己的session
+        HttpSession session = request.getSession();
+        if (session != null) {
+            session.invalidate();
+        }
+
+        //向各个sso客户端发送请求,告诉这个人已经退出
+        authService.logoutAllSsoClients(
+                request.getParameter(SsoConstants.TOKEN_PARAM_NAME));
+
+        //跳转到登录页面
+        String redirectUrl = request.getParameter(SsoConstants.REDIRECT_PARAM_NAME);
+        model.addAttribute(SsoConstants.REDIRECT_PARAM_NAME, redirectUrl);
+        return "index";
     }
 }

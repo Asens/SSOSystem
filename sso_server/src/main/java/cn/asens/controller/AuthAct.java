@@ -23,7 +23,7 @@ public class AuthAct {
     /**
      * 验证token是否正确
      */
-    @RequestMapping("/sso"+SsoConstants.AUTH_TOKEN_URL)
+    @RequestMapping(SsoConstants.AUTH_TOKEN_URL)
     @ResponseBody
     public SsoResponse authToken(HttpServletRequest request) {
 

@@ -13,6 +13,7 @@
         <module>sso_client</module>
         <module>register_center</module>
         <module>sso_core</module>
+        <module>base_sso_client</module>
     </modules>
 
     <parent>

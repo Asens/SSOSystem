@@ -16,6 +16,6 @@ eureka:
       defaultZone: http://localhost:8089/eureka/
 
 sso:
-  serverUrl: http://localhost:8086/sso
+  serverUrl: http://localhost:8086
 
 

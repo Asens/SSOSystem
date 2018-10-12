@@ -4,7 +4,7 @@ public interface SsoConstants {
     /**
      * 登录用户的session
      */
-    String LOGIN_USER_SESSION = "loginUser";
+    String LOGIN_USER_SESSION = "userId";
 
     /**
      * 标记用户是否登录(是否在session中有记录)

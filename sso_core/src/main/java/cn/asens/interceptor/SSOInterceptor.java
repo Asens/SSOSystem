@@ -1,12 +1,12 @@
 package cn.asens.interceptor;
 
+import cn.asens.cache.TokenCache;
 import cn.asens.config.SSOProperties;
 import cn.asens.constants.SsoConstants;
 import cn.asens.service.RemoteService;
 import cn.asens.util.HttpUtil;
 import com.google.common.base.Strings;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.Resource;
@@ -24,6 +24,8 @@ public class SSOInterceptor extends HandlerInterceptorAdapter {
     private SSOProperties ssoProperties;
     @Resource
     private RemoteService remoteService;
+    @Resource
+    private TokenCache tokenCache;
 
 
     @Override
@@ -38,6 +40,7 @@ public class SSOInterceptor extends HandlerInterceptorAdapter {
         if(sessionAttribute==null){
             String token = request.getParameter(SsoConstants.TOKEN_PARAM_NAME);
 
+            //没有token,去登录
             if(Strings.isNullOrEmpty(token)){
                 redirectSsoServer(request,response);
                 return false;
@@ -47,9 +50,44 @@ public class SSOInterceptor extends HandlerInterceptorAdapter {
             Integer userId = remoteService.
                     validateToken(token, HttpUtil.getRequestContextPath(request));
             log.info("got userId [{}] from token",userId);
+
+            //token验证成功
+            if(userId!=null){
+                session.setAttribute(SsoConstants.SESSION_LOGIN_FLAG, token);
+                session.setAttribute(SsoConstants.LOGIN_USER_SESSION, userId);
+                return true;
+            }
+
+            //userId是null,token验证失败
+            redirectSsoServer(request, response);
+            return false;
         }
 
-        return true;
+        //有登录状态
+        //当前用户已登录，如果存在被删除的标记则剔除session
+        boolean flag = tokenCache.containsInvalidKey(sessionAttribute.toString());
+        if (flag) {
+            session.removeAttribute(SsoConstants.SESSION_LOGIN_FLAG);
+            session.removeAttribute(SsoConstants.LOGIN_USER_SESSION);
+            redirectSsoServer(request, response);
+            return false;
+        } else {
+
+            //当前用户已经登录,也需要验证token是否有效
+            Integer userId = remoteService.validateToken(sessionAttribute.toString(),
+                    HttpUtil.getRequestContextPath(request));
+
+            //userId不为空，token验证成功
+            if (userId != null) {
+                session.setAttribute(SsoConstants.LOGIN_USER_SESSION, userId);
+                return true;
+
+            } else {
+                //token验证失败
+                redirectSsoServer(request, response);
+                return false;
+            }
+        }
     }
 
 
