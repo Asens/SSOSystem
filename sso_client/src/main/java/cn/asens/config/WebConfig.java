@@ -1,6 +1,7 @@
 package cn.asens.config;
 
 import cn.asens.interceptor.SSOInterceptor;
+import cn.asens.interceptor.ShiroLoginInterceptor;
 import cn.asens.service.RemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,6 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(SSOInterceptor())
                 .addPathPatterns("/user");
+
+        registry.addInterceptor(ShiroLoginInterceptor())
+                .addPathPatterns("/user");
     }
 
     /**
@@ -44,5 +48,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public SSOInterceptor SSOInterceptor() {
         return new SSOInterceptor();
+    }
+
+    @Bean
+    public ShiroLoginInterceptor ShiroLoginInterceptor() {
+        return new ShiroLoginInterceptor();
     }
 }

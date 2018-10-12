@@ -9,6 +9,7 @@ import cn.asens.service.UserService;
 import cn.asens.service.api.TokenApiService;
 import cn.asens.util.HttpUtil;
 import lombok.extern.log4j.Log4j2;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,6 +45,7 @@ public class TestAct {
 
     @RequestMapping("/user")
     public Object test(HttpServletRequest request) {
+        log.info(SecurityUtils.getSubject().getPrincipals());
         return "logged in userId is "+
                 request.getSession().getAttribute(SsoConstants.LOGIN_USER_SESSION);
     }

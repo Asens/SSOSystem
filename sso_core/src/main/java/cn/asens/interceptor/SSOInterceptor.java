@@ -41,17 +41,7 @@ public class SSOInterceptor extends HandlerInterceptorAdapter {
             String token = request.getHeader(SsoConstants.TOKEN_PARAM_NAME);
 
             if(Strings.isNullOrEmpty(token)){
-                token = HttpUtil.getCookie(SsoConstants.TOKEN_PARAM_NAME);
-            }
-
-            if(Strings.isNullOrEmpty(token)){
                 token = request.getParameter(SsoConstants.TOKEN_PARAM_NAME);
-                if(!Strings.isNullOrEmpty(token)){
-                    HttpUtil.setCookie(SsoConstants.TOKEN_PARAM_NAME,token,
-                            SsoConstants.TOKEN_EXPIRY_TIME,
-                            null);
-                }
-
             }
 
             //没有token,去登录
@@ -112,6 +102,14 @@ public class SSOInterceptor extends HandlerInterceptorAdapter {
         String redirectUrl = ssoProperties.getServerUrl() + "?" +
                 SsoConstants.REDIRECT_PARAM_NAME + "="
                 + HttpUtil.encodeUrl(HttpUtil.getRequestFullPathNoParam(request));
+
+        if(HttpUtil.isAjax()){
+            response.setStatus(403);
+            response.setHeader("message","access denied,login first");
+            response.setHeader("ssoUrl",redirectUrl);
+            return;
+        }
+
         try {
             response.sendRedirect(redirectUrl);
         } catch (IOException e) {

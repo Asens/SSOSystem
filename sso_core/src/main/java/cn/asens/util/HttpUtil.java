@@ -2,6 +2,7 @@ package cn.asens.util;
 
 
 import cn.asens.constants.SsoConstants;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -103,6 +104,12 @@ public class HttpUtil {
         cookie.setPath(org.apache.commons.lang.StringUtils.isBlank(ctx) ? "/" : ctx);
         response.addCookie(cookie);
         return cookie;
+    }
+
+    public static Boolean isAjax(){
+        HttpServletRequest request=getRequest();
+        return !Strings.isNullOrEmpty(request.getHeader("x-requested-with")) &&
+                "XMLHttpRequest".equals(request.getHeader("x-requested-with"));
     }
 
     public static HttpServletResponse getResponse() {

@@ -3,6 +3,7 @@ package cn.asens.controller;
 import cn.asens.constants.SsoConstants;
 import cn.asens.service.AuthService;
 import cn.asens.service.UserService;
+import cn.asens.util.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -45,6 +46,9 @@ public class SSOLoginAct {
         if(userId!=null){
             String token=authService.createToken(userId);
             request.getSession().setAttribute(SsoConstants.SESSION_LOGIN_FLAG, token);
+            HttpUtil.setCookie(SsoConstants.TOKEN_PARAM_NAME,token,
+                    SsoConstants.TOKEN_EXPIRY_TIME,
+                    null);
             JSONObject r=new JSONObject();
             r.put("status","success");
             r.put("returnUrl",redirectUrl + "?" +
@@ -66,6 +70,11 @@ public class SSOLoginAct {
         if (session != null) {
             session.invalidate();
         }
+
+        HttpUtil.setCookie(SsoConstants.TOKEN_PARAM_NAME,"", 0, null);
+
+        //TODO 废弃token
+
 
         //向各个sso客户端发送请求,告诉这个人已经退出
         authService.logoutAllSsoClients(

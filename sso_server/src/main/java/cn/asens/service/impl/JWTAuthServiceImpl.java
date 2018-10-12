@@ -109,6 +109,7 @@ public class JWTAuthServiceImpl implements AuthService {
                     token,e.getMessage(),clientAddress);
             return false;
         }
+        recordSSOClient(clientAddress);
         return true;
     }
 

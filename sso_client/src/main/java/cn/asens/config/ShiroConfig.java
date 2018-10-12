@@ -16,7 +16,7 @@ import org.springframework.context.annotation.DependsOn;
  * Created by Asens on 2017/7/22
  */
 
-//@Configuration
+@Configuration
 public class ShiroConfig {
 
     @Bean(name = "shiroFilter")
