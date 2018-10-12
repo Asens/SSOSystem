@@ -4,8 +4,12 @@ package cn.asens.util;
 import cn.asens.constants.SsoConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -71,4 +75,41 @@ public class HttpUtil {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
+    public static String getCookie(String name) {
+        HttpServletRequest request=getRequest();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(name)) {
+                    return c.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Cookie setCookie(String name, String value,
+                                   Integer expiry, String domain) {
+        HttpServletRequest request=getRequest();
+        HttpServletResponse response=getResponse();
+        Cookie cookie = new Cookie(name, value);
+        if (expiry != null) {
+            cookie.setMaxAge(expiry);
+        }
+        if (org.apache.commons.lang.StringUtils.isNotBlank(domain)) {
+            cookie.setDomain(domain);
+        }
+        String ctx = request.getContextPath();
+        cookie.setPath(org.apache.commons.lang.StringUtils.isBlank(ctx) ? "/" : ctx);
+        response.addCookie(cookie);
+        return cookie;
+    }
+
+    public static HttpServletResponse getResponse() {
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+    }
+
+    public static HttpServletRequest getRequest() {
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    }
 }

@@ -38,7 +38,21 @@ public class SSOInterceptor extends HandlerInterceptorAdapter {
 
         //没有登录状态
         if(sessionAttribute==null){
-            String token = request.getParameter(SsoConstants.TOKEN_PARAM_NAME);
+            String token = request.getHeader(SsoConstants.TOKEN_PARAM_NAME);
+
+            if(Strings.isNullOrEmpty(token)){
+                token = HttpUtil.getCookie(SsoConstants.TOKEN_PARAM_NAME);
+            }
+
+            if(Strings.isNullOrEmpty(token)){
+                token = request.getParameter(SsoConstants.TOKEN_PARAM_NAME);
+                if(!Strings.isNullOrEmpty(token)){
+                    HttpUtil.setCookie(SsoConstants.TOKEN_PARAM_NAME,token,
+                            SsoConstants.TOKEN_EXPIRY_TIME,
+                            null);
+                }
+
+            }
 
             //没有token,去登录
             if(Strings.isNullOrEmpty(token)){

@@ -1,6 +1,7 @@
 server:
   port: 8086
 
+JWTSecret: askflanffc3U034ti3Gjwge324
 
 spring:
   application:

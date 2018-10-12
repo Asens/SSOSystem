@@ -23,11 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * auth服务接口最简单实现
- *
- * @author fengshuonan
- * @date 2018-02-03 22:56
  */
-@Service
+
 public class SimpleAuthServiceImpl implements AuthService {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -69,24 +66,24 @@ public class SimpleAuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean checkToken(HttpServletRequest request, String token, String clientAddr) {
+    public boolean checkToken(HttpServletRequest request, String token,
+                              String clientAddress) {
         if (cache.containsKey(token)) {
-            recordSSOClient(clientAddr);
+            recordSSOClient(clientAddress);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
-    public Integer getLoginUserByToken(String token) {
+    public Integer getUserIdByToken(String token) {
         return (Integer) cache.get(token);
     }
 
 
     @Override
-    public void recordSSOClient(String clientAddr) {
-        ssoClients.add(clientAddr);
+    public void recordSSOClient(String clientAddress) {
+        ssoClients.add(clientAddress);
     }
 
     @Override

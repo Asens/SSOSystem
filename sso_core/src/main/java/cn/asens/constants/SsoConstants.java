@@ -34,7 +34,7 @@ public interface SsoConstants {
     /**
      * 客户端请求校验token是否正确时,需要带上自己服务器的地址
      */
-    String CLIENT_REQUEST_ADDR_PARAM_NAME = "clientAddr";
+    String CLIENT_REQUEST_ADDR_PARAM_NAME = "clientAddress";
 
     /**
      * token验证的url
@@ -45,4 +45,9 @@ public interface SsoConstants {
      * 清除局部
      */
     String CLEAR_TOKEN_URL = "/api/sso/clearToken";
+
+    /**
+     * token过期时间
+     */
+    Integer TOKEN_EXPIRY_TIME = 7*24*60*60;
 }

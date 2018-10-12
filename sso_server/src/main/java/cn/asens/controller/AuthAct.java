@@ -28,12 +28,12 @@ public class AuthAct {
     public SsoResponse authToken(HttpServletRequest request) {
 
         String token = request.getParameter(SsoConstants.TOKEN_PARAM_NAME);
-        String clientAddr = request.getParameter(SsoConstants.CLIENT_REQUEST_ADDR_PARAM_NAME);
+        String clientAddress = request.getParameter(SsoConstants.CLIENT_REQUEST_ADDR_PARAM_NAME);
 
-        boolean flag = authService.checkToken(request, token, clientAddr);
+        boolean flag = authService.checkToken(request, token, clientAddress);
 
         if (flag) {
-            Integer userId = authService.getLoginUserByToken(token);
+            Integer userId = authService.getUserIdByToken(token);
             return SsoResponse.success(userId);
         } else {
             return new SsoResponse(ResponseStatus.WRONG_TOKEN);

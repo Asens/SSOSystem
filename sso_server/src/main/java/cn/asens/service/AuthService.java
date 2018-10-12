@@ -25,18 +25,18 @@ public interface AuthService {
     /**
      * 验证token是否正确(true-验证成功,false-验证失败)
      */
-    boolean checkToken(HttpServletRequest request, String token, String clientAddr);
+    boolean checkToken(HttpServletRequest request, String token, String clientAddress);
 
     /**
      * 通过token获取登录用户
      */
-    Integer getLoginUserByToken(String token);
+    Integer getUserIdByToken(String token);
 
 
     /**
      * 记录哪些客户端在服务端进行过校验
      */
-    void recordSSOClient(String clientAddr);
+    void recordSSOClient(String clientAddress);
 
     /**
      * 向所有sso客户端发送退出信号

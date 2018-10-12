@@ -26,10 +26,10 @@ public class RemoteService {
     /**
      * 请求sso server,验证token是否正确
      */
-    public Integer validateToken(String token, String clientAddr) {
+    public Integer validateToken(String token, String clientAddress) {
         String ssoUrl = "http://SSOServer" + SsoConstants.AUTH_TOKEN_URL
                 + "?" + SsoConstants.TOKEN_PARAM_NAME + "=" + token +
-                "&" + SsoConstants.CLIENT_REQUEST_ADDR_PARAM_NAME + "=" + clientAddr;
+                "&" + SsoConstants.CLIENT_REQUEST_ADDR_PARAM_NAME + "=" + clientAddress;
         SsoResponse ssoResponse = restTemplate.postForObject(ssoUrl, null,
                 SsoResponse.class);
 
